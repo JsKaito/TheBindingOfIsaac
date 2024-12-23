@@ -1,4 +1,4 @@
-local D6IS = RegisterMod("D6s Car Battery Synergies!", 1)
+local D6IS = RegisterMod("Dice synergies with Car Battery!", 1)
 
 local D6 = CollectibleType.COLLECTIBLE_D6
 local EternalD6 = CollectibleType.COLLECTIBLE_ETERNAL_D6
@@ -61,26 +61,33 @@ end
 
 if ModConfigMenu then
 
-ModConfigMenu.AddSetting("Dices with Car Battery", "General", {
+ModConfigMenu.AddSetting("Dice synergies with Car Battery", "General", {
 
   Type = ModConfigMenu.OptionType.BOOLEAN,
   CurrentSetting = function()
     return SpindownDouble
   end,
+
   Display = function()
   	if SpindownDouble then return "Spindown Dice subtractions: 2"
 		else return "Spindown Dice subtractions: 1"
     end
   end,
+
   OnChange = function(valor)
     SpindownDouble = valor
-    print (SpindownDouble)
+    if SpindownDouble then
+      print("Spindown Dice will decrease items internal ID by TWO.")
+    else
+      print("Spindown Dice will decrease items internal ID by ONE.")
+    end
+
     SaveModConfig()
   end,
+
   Info = {
     "Number of rerolls from Spindown Dice with Car Battery",
   }
-
 })
 end
 
