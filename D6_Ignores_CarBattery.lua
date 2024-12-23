@@ -61,7 +61,7 @@ end
 
 if ModConfigMenu then
 
-ModConfigMenu.AddSetting("D6s with Car Battery", "General", {
+ModConfigMenu.AddSetting("Dices with Car Battery", "General", {
 
   Type = ModConfigMenu.OptionType.BOOLEAN,
   CurrentSetting = function()
