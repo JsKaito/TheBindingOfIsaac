@@ -1,16 +1,88 @@
-local mod = RegisterMod("D6 ignores Car Battery", 1)
+local D6IS = RegisterMod("D6s Car Battery Synergies!", 1)
 
 local D6 = CollectibleType.COLLECTIBLE_D6
 local EternalD6 = CollectibleType.COLLECTIBLE_ETERNAL_D6
 local D100 = CollectibleType.COLLECTIBLE_D100
 local DInfinity = CollectibleType.COLLECTIBLE_D_INFINITY
+local DSpindown = CollectibleType.COLLECTIBLE_SPINDOWN_DICE
+local SpindownDouble = true
 
-function mod:UsarActivo(ItemActivo, rng, Jugador, useFlags, SlotActiva, VariableData)
+
+if EID then
+
+	local languageCode = "en_us"
+	local DicesCarBattery = {
+	[D6] = "Rerolls and gives a two item choice.",-- D6
+  [EternalD6] = "Rerolls and gives a two item choice.",-- Eternal D6
+  [D100] = "When rerolling pedestals, rerolls and gives a two item choice.",-- D100
+  [DInfinity] = "If used as a D6 variant, rerolls and gives a two item choice.",-- DInfinity
+  [DSpindown] = "| DEFAULT: 2 | Decreases the item internal ID by two or one.",-- Spindown Dice
+	} EID:updateDescriptionsViaTable(DicesCarBattery, EID.descriptions[languageCode].carBattery)
+end
+
+
+function D6IS:UsarActivo(ItemActivo, rng, Jugador, useFlags, SlotActiva, VariableData)
   if (ItemActivo == D6) or (ItemActivo == EternalD6) or (ItemActivo == D100) or (ItemActivo == DInfinity) then
-      if useFlags & UseFlag.USE_CARBATTERY ~= 0 then
+    if Jugador:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
+      Jugador:UseActiveItem(ActiveSlot.SLOT_PRIMARY)
+      Jugador:UseCard(81)
       return true
     end
   end
 end
 
-mod:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, mod.UsarActivo)
+
+function D6IS:AntesUsarActivo(ItemActivo, rng, Jugador, useFlags, SlotActiva, VariableData)
+  if (ItemActivo == DSpindown) and (SpindownDouble == false) then
+    if useFlags & UseFlag.USE_CARBATTERY ~= 0 then
+      return true
+    end
+  end
+end
+
+local function SaveModConfig()
+  if SpindownDouble then
+      D6IS:SaveData("true")
+  else
+      D6IS:SaveData("false")
+  end
+end
+
+function D6IS:LoadStorage()
+  if D6IS:HasData() then
+    savedata = D6IS:LoadData()
+    if savedata == "true" then
+      SpindownDouble = true
+    else
+      SpindownDouble = false
+    end
+  end
+end
+
+if ModConfigMenu then
+
+ModConfigMenu.AddSetting("D6s with Car Battery", "General", {
+
+  Type = ModConfigMenu.OptionType.BOOLEAN,
+  CurrentSetting = function()
+    return SpindownDouble
+  end,
+  Display = function()
+  	if SpindownDouble then return "Spindown Dice subtractions: 2"
+		else return "Spindown Dice subtractions: 1"
+    end
+  end,
+  OnChange = function(valor)
+    SpindownDouble = valor
+    print (SpindownDouble)
+    SaveModConfig()
+  end,
+  Info = {
+    "Number of rerolls from Spindown Dice with Car Battery",
+  }
+
+})
+end
+
+D6IS:AddCallback(ModCallbacks.MC_USE_ITEM, D6IS.UsarActivo)
+D6IS:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, D6IS.AntesUsarActivo)
