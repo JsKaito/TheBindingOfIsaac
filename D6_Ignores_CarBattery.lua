@@ -22,15 +22,20 @@ end
 
 
 function D6IS:UsarActivo(ItemActivo, rng, Jugador, useFlags, SlotActiva, VariableData)
-  if (ItemActivo == D6) or (ItemActivo == EternalD6) or (ItemActivo == D100) or (ItemActivo == DInfinity) then
+  if (ItemActivo == D6) or (ItemActivo == EternalD6) or (ItemActivo == D100) then
     if Jugador:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
-      Jugador:UseActiveItem(ActiveSlot.SLOT_PRIMARY)
-      Jugador:UseCard(81)
+      Jugador:UseCard(81, UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOANIM)
+      return true
+    end
+  end
+
+  if (ItemActivo == DInfinity) and (Jugador:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY)) then
+    if (ActiveSlot.VarData == 2) or (ActiveSlot.VarData == 3) or (ActiveSlot.VarData == 9) then
+      Jugador:UseCard(81, UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOANIM)
       return true
     end
   end
 end
-
 
 function D6IS:AntesUsarActivo(ItemActivo, rng, Jugador, useFlags, SlotActiva, VariableData)
   if (ItemActivo == DSpindown) and (SpindownDouble == false) then
