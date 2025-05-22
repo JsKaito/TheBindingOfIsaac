@@ -6,6 +6,7 @@ local D100 = CollectibleType.COLLECTIBLE_D100
 local DInfinity = CollectibleType.COLLECTIBLE_D_INFINITY
 local DSpindown = CollectibleType.COLLECTIBLE_SPINDOWN_DICE
 local SpindownDouble = true
+local useCard = false
 
 
 if EID then
@@ -22,16 +23,20 @@ end
 
 
 function D6IS:UsarActivo(ItemActivo, rng, Jugador, useFlags, SlotActiva, VariableData)
+  print(SlotActiva)
+  if SlotActiva == -1 then return false end
   if (ItemActivo == D6) or (ItemActivo == EternalD6) or (ItemActivo == D100) then
     if Jugador:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
-      Jugador:UseCard(81, UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOANIM)
+      useCard = true
+      --Jugador:UseCard(81, UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOANIM)
       return true
     end
   end
 
   if (ItemActivo == DInfinity) and (Jugador:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY)) then
     if (ActiveSlot.VarData == 2) or (ActiveSlot.VarData == 3) or (ActiveSlot.VarData == 9) then
-      Jugador:UseCard(81, UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOANIM)
+      useCard = true
+      --Jugador:UseCard(81, UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOANIM)
       return true
     end
   end
@@ -42,6 +47,13 @@ function D6IS:AntesUsarActivo(ItemActivo, rng, Jugador, useFlags, SlotActiva, Va
     if useFlags & UseFlag.USE_CARBATTERY ~= 0 then
       return true
     end
+  end
+end
+
+function D6IS:OnUpdate(Jugador)
+  if useCard then
+    Jugador:UseCard(81, UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOANIM)
+    useCard = false
   end
 end
 
@@ -96,5 +108,7 @@ ModConfigMenu.AddSetting("Dice synergies with Car Battery", "General", {
 })
 end
 
+
+D6IS:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, D6IS.OnUpdate)
 D6IS:AddCallback(ModCallbacks.MC_USE_ITEM, D6IS.UsarActivo)
 D6IS:AddCallback(ModCallbacks.MC_PRE_USE_ITEM, D6IS.AntesUsarActivo)
