@@ -28,7 +28,6 @@ function D6IS:UsarActivo(ItemActivo, rng, Jugador, useFlags, SlotActiva, Variabl
   if (ItemActivo == D6) or (ItemActivo == EternalD6) or (ItemActivo == D100) then
     if Jugador:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY) then
       useCard = true
-      --Jugador:UseCard(81, UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOANIM)
       return true
     end
   end
@@ -36,7 +35,6 @@ function D6IS:UsarActivo(ItemActivo, rng, Jugador, useFlags, SlotActiva, Variabl
   if (ItemActivo == DInfinity) and (Jugador:HasCollectible(CollectibleType.COLLECTIBLE_CAR_BATTERY)) then
     if (ActiveSlot.VarData == 2) or (ActiveSlot.VarData == 3) or (ActiveSlot.VarData == 9) then
       useCard = true
-      --Jugador:UseCard(81, UseFlag.USE_NOANNOUNCER | UseFlag.USE_NOANIM)
       return true
     end
   end
